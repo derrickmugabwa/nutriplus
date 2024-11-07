@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\ClientResource\Pages;
+use App\Filament\Resources\ClientResource\RelationManagers;
+use App\Models\Client;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TableColumn;
+
+
+
+class ClientResource extends Resource
+{
+    protected static ?string $model = Client::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('name')->required(),
+                Forms\Components\TextInput::make('email')->email()->required(),
+                Forms\Components\TextInput::make('phone')->tel()->required(),
+                Forms\Components\TextInput::make('address')->required(),
+                Forms\Components\Select::make('gender')
+                ->options([
+                    'male' => 'Male',
+                    'female' => 'Female',
+                    ])
+                    ->required(),
+                Forms\Components\DatePicker::make('date_of_birth')
+                ->required()
+                ->native(false),
+                Forms\Components\Select::make('pregnacy')
+                ->options([
+                    'na' => 'N/A',
+                    'pregnant' => 'Pregnant',
+                    'lactating' => 'Lactating',
+                ]),
+                // Forms\Components\Select::make('tags')
+                //     ->multiple()
+                //     ->options([
+                //         'weightloss' => 'Weight Loss',
+                //         'diebetes' => 'Diebetes',
+                //         'fitness' => 'Fitness',
+                //         'meals' => 'Meal Plans',
+                //     ]),
+                Forms\Components\TextInput::make('weight')
+                ->numeric()
+                ->inputMode('decimal'),
+                Forms\Components\TextInput::make('height')
+                ->numeric()
+                ->inputMode('decimal'),
+                Forms\Components\TextInput::make('body_fat')
+                ->numeric()
+                ->inputMode('decimal'),
+                Forms\Components\Hidden::make('user_id')
+                    ->default(auth()->id()),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('phone'),
+                Tables\Columns\TextColumn::make('address'),
+                Tables\Columns\TextColumn::make('date_of_birth'),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListClients::route('/'),
+            'create' => Pages\CreateClient::route('/create'),
+            'edit' => Pages\EditClient::route('/{record}/edit'),
+        ];
+    }
+}
