@@ -34,7 +34,7 @@ Ensure you have the following installed:
 Clone the project
 
 ```bash
-  https://github.com/derrickmugabwa/nutriplus.git
+  git clone https://github.com/derrickmugabwa/nutriplus.git
 ```
 
 Go to the project directory
